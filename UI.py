@@ -368,7 +368,7 @@ def run_pikachu(selected_alg: str):
                                 elif isinstance(doi_tuong,BEAM_SEARCH):
                                     path,cost = doi_tuong.beam_search(TT_BD, TT_GOAL)
                                 if path:
-                                    doi_tuong.Ve_Simulation(panel)
+                                    #doi_tuong.Ve_Simulation(panel)
                                     (x1,y1) = path[0]
                                     (x2,y2) = path[-1]
                                     ma_tran[x1][y1] = 0
@@ -397,17 +397,16 @@ def run_pikachu(selected_alg: str):
                                 Xn = (x,y)
                                 visited = set([(i,j)])
                                 path = None
-                                try:
-                                    from BK import BK as BKClass
-                                    from Foward_Checking import FW_BK as FWClass
-                                except:
-                                    BKClass = object; FWClass = object
+                                
+                                from BK import BK 
+                                from Foward_Checking import FW_BK
+                                
                                 if doi_tuong.__class__.__name__ == "BK":
                                     path = doi_tuong.Backtracking(X1, Xn, [X1], 0, visited, -1)
                                 else:
                                     path = doi_tuong.FW_Backtracking(X1, Xn, [X1], 0, visited, -1)
                                 if path:
-                                    doi_tuong.Ve_Simulation(panel)
+                                    #doi_tuong.Ve_Simulation(panel)
                                     (x1,y1) = path[0]; (x2,y2) = path[-1]
                                     ma_tran[x1][y1] = 0; ma_tran[x2][y2] = 0
                                     Ve_Duong_Di(path, panel)
@@ -490,7 +489,7 @@ def run_pikachu(selected_alg: str):
                 try:
                     Ve_Duong_Di([p1, p2], panel)
                     cap_nhat_giao_dien()
-                    pygame.time.wait(180)
+                    pygame.time.wait(450)
                 except Exception:
                     pass
                 ma_tran[p1[0]][p1[1]] = ma_tran[p2[0]][p2[1]] = 0
@@ -519,7 +518,7 @@ def run_pikachu(selected_alg: str):
                 man_hinh.blit(panel, (100, 170))
                 Gan_icon(ma_tran, panel)
                 pygame.display.update()
-                pygame.time.wait(120)
+                pygame.time.wait(450)
             except Exception:
                 pass
 

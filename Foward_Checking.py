@@ -41,7 +41,7 @@ class FW_BK():
     def FW_Backtracking(self,X_cur,X_goal,path,turn,visited,huong_ht,lan_lap = 0):
       if X_cur == X_goal:
           return path.copy()
-      if lan_lap >  25:
+      if lan_lap >  15:
           return None
       Tap_Gia_Tri = self.forward_checking(X_cur[0],X_cur[1],self.ma_tran[X_goal[0]][X_goal[1]])
       for (dx,dy) in Tap_Gia_Tri:
