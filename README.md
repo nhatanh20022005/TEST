@@ -1,25 +1,25 @@
 # Pikachu AI — README
 
-## 1. Tổng quan dự án
+## 1. Tổng quan dự án trò chơi 
 
-Dự án là bộ thuật toán tìm đường và agent chơi trò "Pikachu" (ghép cặp ô). Mỗi thuật toán nằm trong một file riêng và được UI (UI.py) gọi để thực hiện tìm đường hoặc quyết định mở ô. Các thuật toán chính có trong repository:
-
-- BFS (Breadth-First Search)
-- DFS (Depth-First Search)
-- A* (A_SAO.py)
+Dự án trò chơi nối thú Pikachu là trò chơi tìm và nối hai hình giống nhau sao cho đường nối giữa 2 hình là 3 đoạn thẳng, tức 2 lần rẽ 
+Các thuật toán dùng để tìm
+- BFS
+- DFS 
+- A* 
 - Greedy
-- Hill Climbing (HILL_CLAMBING.py)
+- Hill Climbing 
 - Beam Search
-- Backtracking (BK.py)
-- Forward Checking Backtracking (Foward_Checking.py)
-- MU_1_PHAN (local belief agent)
-- MU_TOAN_PHAN (non-local belief agent)
+- Backtracking 
+- Forward Checking Backtracking 
+- MU_1_PHAN 
+- MU_TOAN_PHAN 
 
 ## 2. Cấu trúc thư mục & file quan trọng
 
 - `UI.py` — giao diện chính, danh sách thuật toán, gọi hàm tự động (Tu_Dong*, Tu_Dong_BFS*), vẽ bảng và animation.
-- `BFS.py`, `DFS.py` — các trình duyệt đồ thị cơ bản với ràng buộc tối đa 2 lần rẽ.
-- `A_SAO.py` — A* sử dụng heuristic Manhattan; lưu đường đi và cost list để vẽ.
+- `BFS.py`, `DFS.py` — Hai file này sẽ thực hiện nhóm tìm kiếm không thông tin thực hai thuật toán BFS và DFS 
+- `A_SAO.py` — A* sử dụng heuristic Manhattan và cost so với vị trí ban đầu để tính chi phí; lưu đường đi và cost list để vẽ.
 - `Greedy.py` — thuật toán greedy dựa trên heuristic Manhattan (chỉ f = h).
 - `HILL_CLAMBING.py` — hill climbing với điều kiện chỉ chấp nhận trạng thái không tăng heuristic; giới hạn số lần rẽ.
 - `BEAM_SEARCH.py` — beam search giữ beam_width trạng thái tốt nhất theo f=h.
@@ -27,52 +27,35 @@ Dự án là bộ thuật toán tìm đường và agent chơi trò "Pikachu" (g
 - `Foward_Checking.py` — backtracking có forward checking (loại trừ vị trí không hợp lệ trước khi mở rộng).
 - `MU_1_PHAN.py`, `MU_TOAN_PHAN.py` — agent dùng niềm tin (belief) để suy đoán vị trí giống nhau rồi thử mở.
 - Tài nguyên ảnh và âm thanh (các file .png, .jpg, .wav) được load bởi UI.
-
-## 3. Hướng dẫn nhanh cách chạy
-
-1. Chuẩn bị môi trường Python 3.8+
-2. Cài thư viện:
-   ```
-   pip install numpy pygame psutil
-   ```
-3. Đảm bảo các file ảnh (vd: `bg_menu2.jpg`, `bg.png`, icons) ở cùng thư mục hoặc đường dẫn tương ứng.
-4. Chạy:
-   ```
-   python UI.py
-   ```
-   Màn hình menu hiện, chọn thuật toán rồi PLAY để chạy tự động.
-
-## 4. Mô tả chi tiết từng thuật toán
+## 3. Mô tả chi tiết từng thuật toán
 
 ### BFS (Breadth-First Search)
 
-Ý tưởng: Mở rộng theo lớp, đảm bảo tìm đường ngắn nhất về số bước (với ràng buộc tối đa 2 lần rẽ). Implement dùng deque. Khi mở node, kiểm tra ràng buộc: ô mới phải là ô trống (0) hoặc là ô mục tiêu có cùng giá trị; không cho quay ngược lại (kiểm tra hướng) và chỉ chấp nhận <=2 lần rẽ.
+Ý tưởng: Thuật toán BFS mở rộng các ô theo từng lớp để đảm bảo tìm được đường đi ngắn nhất giữa hai ô giống nhau. Mỗi trạng thái lưu giá trị,vị trí, số lần rẽ và hướng đi hiện tại. Khi mở rộng, chỉ xét các ô trống hoặc ô đích hợp lệ, không được quay ngược và số lần rẽ không vượt quá 2. BFS sử dụng hàng đợi để duyệt theo lớp, lưu cha để truy vết đường đi. Khi đạt trạng thái đích, thuật toán trả về danh sách tọa độ tạo thành đường nối hợp lệ hoặc trả về None
 
 Đầu vào: trạng thái ban đầu `(value,(x,y),turn,dir)` và trạng thái đích. Trả về path (danh sách toạ độ).
 
 ### DFS (Depth-First Search)
 
-Ý tưởng: Duyệt theo ngăn xếp, sử dụng cùng ràng buộc như BFS về hướng và số lần rẽ. DFS dễ rơi vào nhánh sâu; đã có giới hạn số lần lặp trong một số backtracking tùy file.
-
+Ý tưởng: Thuật toán DFS mở rộng các ô theo chiều sâu, đi càng xa càng tốt tức là duyệt 1 nhánh đến khi nào hết nhánh ta quay lại nhánh khác. Mỗi trạng thái lưu giá trị, vị trí, số lần rẽ và hướng đi hiện tại. Khi mở rộng, chỉ xét ô trống hoặc ô đích có cùng giá trị, không quay ngược tức là không đi hướng ngược lại và không vượt quá 2 lần rẽ. DFS sử dụng ngăn xếp để duyệt, lưu cha để truy vết đường đi sau khi tìm thấy đích. Kết quả là một đường nối hợp lệ giữa hai ô cùng giá trị, thỏa ràng buộc về số lần rẽ hoặc None nếu không tìm thấy
 ### A* (A_SAO.py)
-
-Ý tưởng: Dùng hàm f = g + h. g được tính là cost di chuyển (ở đây cost mỗi bước = 1). h là heuristic Manhattan (có hàm Euclid sẵn nhưng không dùng). Visited lưu chi phí tốt nhất đã thấy cho trạng thái để cho phép relax nếu tìm thấy đường tốt hơn. Kết quả trả về cả path và list cost để UI hiển thị giá trị heuristic/g.
-
+Ý tưởng: Thuật toán A* mở rộng các ô theo thứ tự chi phí ước lượng nhỏ nhất để tìm đường đi tối ưu giữa hai ô giống nhau. Mỗi trạng thái lưu giá trị, vị trí, số lần rẽ và hướng đi. Hàm f = g + h được dùng, trong đó g là chi phí thực từ điểm đầu, h là giá trị heuristic khoảng cách Manhattan đến đích. Khi mở rộng, chỉ xét ô trống hoặc ô đích hợp lệ, không quay hướng ngược lại và rẽ tối đa 2 lần. A* sử dụng hàng đợi ưu tiên (heapq) để chọn trạng thái có chi phí nhỏ nhất, đảm bảo tìm được đường ngắn nhất và hợp lệ. Visited sẽ lưu trạng thái đã sinh ra đồng thời cũng xem trong đó có trạng thái mới nào đã có trong visited mà hàm f nhỏ hơn f trạng thái cũ đã có trong visited không, có ta ta cập nhật và cho vào hàng đợi ưu tiên
 ### Greedy
 
-Ý tưởng: Lấy f = h (Manhattan). Không bảo đảm tối ưu, nhưng nhanh. Visited lưu h hiện tại để chỉ chấp nhận trạng thái nếu h tốt hơn.
+Ý tưởng: Giống thuật toán A_Sao nhưng f tính bằng heuristic
 
 ### Hill Climbing
 
-Ý tưởng: Chỉ chấp nhận các bước làm giảm hoặc không tăng giá trị heuristic (càng gần goal càng tốt). Sử dụng heap ưu tiên theo heuristic. Có biến lan_vo để giữ thứ tự ổn định.
+Ý tưởng: Thuật toán Hill Climbing chọn bước đi heuristic nhỏ hơn hoặc bằng ở lân cận để tiến gần đích.Trạng thái gồm giá trị, vị trí, số lần rẽ và hướng; chỉ mở các ô trống hoặc ô đích hợp lệ, không quay ngược và rẽ ≤ 2 lần.Tại mỗi bước, duyệt 4 hướng, tính h (Manhattan) và chỉ nhận những nước đi có h <= h_hiện_tại. Dùng hàng đợi ưu tiên theo h để bốc nước đi tốt nhất trước, lưu parent để truy vết đường.Nếu đạt đích trả về đường đi; nếu không còn láng giềng cải thiện → kẹt cực trị cục bộ và dừng.
 
 ### Beam Search
 
-Ý tưởng: Mỗi vòng chỉ giữ `beam_width` trạng thái tốt nhất (theo h). Tạo candidate tiếp theo từ từng trạng thái, gom về beam nhỏ nhất để tiếp tục. Thích hợp giảm mức lan truyền trạng thái.
-
+Ý tưởng: Thuật toán Beam Search là phiên bản cải tiến của BFS, chỉ giữ lại một số lượng giới hạn các trạng thái “tốt nhất” (theo heuristic nhỏ nhất) tại mỗi bước mở rộng.
+Mỗi trạng thái lưu vị trí, hướng đi và số lần rẽ, chỉ xét ô trống hoặc ô đích hợp lệ, không quay ngược và rẽ tối đa 2 lần.
+Thuật toán đánh giá mỗi trạng thái bằng h = |x - x_goal| + |y - y_goal| và chọn ra beam_width trạng thái có h nhỏ nhất để tiếp tục mở rộng.
 ### Backtracking (BK.py)
 
-Ý tưởng: Dùng đệ quy tìm đường, kiểm tra ràng buộc trước khi mở rộng (hướng, số lần rẽ, ô hợp lệ). Có hàm `_is_opposite` để ngăn quay lại trái với hướng trước đó. Có giới hạn đệ quy (lan_lap) để tránh quá sâu.
+Ý tưởng: Dùng đệ quy tìm đường, kiểm tra ràng buộc trước khi mở rộng (hướng, số lần rẽ, ô hợp lệ). Có hàm `_is_opposite` để ngăn quay lại trái với hướng trước đó. Có giới hạn đệ quy tức tập biến (lan_lap) để tránh quá sâu, 
 
 ### Forward Checking Backtracking (Foward_Checking.py)
 
@@ -86,7 +69,7 @@ Dự án là bộ thuật toán tìm đường và agent chơi trò "Pikachu" (g
 
 Ý tưởng: Agent có vị trí bắt đầu cụ thể, chỉ quan sát trong phạm vi nhất định và cập nhật niềm tin cục bộ. Khá hữu ích để mô phỏng agent di động khám phá bản đồ dần dần.
 
-## 5. Giao diện người dùng (UI.py)
+## 4. Giao diện người dùng (UI.py)
 
 UI đảm nhiệm:
 
@@ -98,29 +81,8 @@ UI đảm nhiệm:
 - Lưu lịch sử chạy (thời gian, bộ nhớ) vào `history.csv` khi pause hoặc hoàn thành level.
 
 ### Phím tắt và tương tác
-
 - ESC: thoát game
 - P: tạm dừng/resume và ghi lịch sử
 - Trong menu: chọn OPTIONS để pick thuật toán, PLAY để chạy
 
-## 6. Tham số quan trọng và tuning
 
-- Giới hạn số lần rẽ: 2 (một ràng buộc quan trọng của trò chơi Pikachu).
-- Beam width: thay đổi trong BEAM_SEARCH để trade-off thời gian/khả năng tìm được đường.
-- Pham_vi quan sát trong MU_*: mặc định 2, giảm để agent biết ít hơn, tăng để agent "thông minh" hơn.
-- Giới hạn đệ quy/lan_lap trong backtracking để tránh timeout.
-
-## 7. Lưu ý vận hành & debugging
-
-- Chắc chắn các file ảnh/âm thanh tồn tại; thiếu file sẽ gây lỗi khi load.
-- Các hàm dùng chỉ số cố định 12x12 — nếu thay đổi kích thước bảng phải chỉnh lại điều kiện 0..11.
-- Trong một số nơi biến global (ví dụ `lan_vo`) được sử dụng; nếu gặp lỗi về global, xem cách khởi tạo/đặt lại giữa các lần chạy.
-- Để log chi tiết, thêm print hoặc ghi ra file trong các hàm sinh trạng thái.
-
-## 8. Tài liệu tham khảo nội bộ
-
-Đọc trực tiếp từng file để xem chi tiết cài đặt. Các hàm vẽ (Ve_Simulation, Ve_Duong_Di, Ve_Duong_Di_1) cho phép debug trực quan.
-
----
-
-*Phiên bản README: 1.0 — tạo bằng HTML để dễ mở trong trình duyệt. Nếu cần bản Markdown thuần, báo lại để chuyển đổi.*
