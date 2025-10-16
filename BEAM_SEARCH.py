@@ -48,29 +48,23 @@ class BEAM_SEARCH():
                             trang_thai_moi.append((f_new, (x_new, y_new), idx, new_re))
         return trang_thai_moi
 
-    def beam_search(self,TT_BD, TT_Dich, beam_width=3):
+    def beam_search(self,TT_BD, TT_Dich, beam_width=2):
         value, (x_start, y_start), turn, huong_truoc = TT_BD
         _, (x_goal, y_goal), _, _ = TT_Dich
-
         ds = []
         heapq.heappush(ds, (0, [(x_start, y_start)], -1, 0))
-
         visited = set()
         visited.add((x_start, y_start, -1, 0))
-
         while ds:
             ds_hien_tai = []
             for _ in range(min(beam_width, len(ds))):
                 f, path, huong, re = heapq.heappop(ds)
                 ds_hien_tai.append((f, path, huong, re))
-
             ds_tt_moi = []
             for f, path, huong, re in ds_hien_tai:
                 (x, y) = path[-1]
-
                 if (x, y) == (x_goal, y_goal) and re <= 2:
                     return path, f
-
                 cac_trang_thai_moi = self.Sinh_Trang_Thai_Ke_Tiep_Beam(
                     value, x, y, huong, re, x_goal, y_goal, visited
                 )

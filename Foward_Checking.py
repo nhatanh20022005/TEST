@@ -28,9 +28,9 @@ class FW_BK():
                     Tap_Gia_Tri.append((x_new, y_new))
         return Tap_Gia_Tri
 
-    def init_Tap_Rang_Buoc(self, turn, x, y, value, huong_trc, huong_ht):
+    def init_Tap_Rang_Buoc(self, turn, x, y, value, huong_trc, huong_ht, x_goal, y_goal):
         if x < 12 and x >= 0 and y < 12 and y >= 0:
-            if (self.ma_tran[x][y] == 0 or self.ma_tran[x][y] == value):
+            if (self.ma_tran[x][y] == 0 or (self.ma_tran[x][y] == value and x == x_goal and y == y_goal)):
                 if self._is_opposite(huong_trc, huong_ht):
                     return False
                 turn += (0 if huong_trc == huong_ht else 1)
@@ -51,7 +51,7 @@ class FW_BK():
           else:
               huong_trc = huong_ht
               huong_moi = (dx - X_cur[0], dy - X_cur[1])
-          if  self.init_Tap_Rang_Buoc(turn,dx,dy,self.ma_tran[X_goal[0]][X_goal[1]],huong_trc,huong_moi) and (dx,dy) not in visited:
+          if   self.init_Tap_Rang_Buoc(turn,dx,dy,self.ma_tran[X_goal[0]][X_goal[1]],huong_trc,huong_moi,X_goal[0],X_goal[1]) and (dx,dy) not in visited:
               new_turn = turn
               if (huong_trc != huong_moi):
                   new_turn += 1

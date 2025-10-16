@@ -1,4 +1,6 @@
 import sys, random, pygame
+from collections import deque
+
 import numpy as np
 # Đặt trong đầu file game.py (hoặc file chính)
 import csv, os, psutil, time
@@ -262,7 +264,7 @@ def run_pikachu(selected_alg: str):
         if t in ("beamsearch"): return BEAM_SEARCH(ma_tran)
         if t in ("greedy"): return Greedy(ma_tran)
         if t in ("mutp"): return MU_TOAN_PHAN(ma_tran)
-        if t in ("mu1p"): return MU_1_PHAN(ma_tran)
+        if t in ("mu1phan"): return MU_1_PHAN(ma_tran)
 
 
         return None
@@ -507,9 +509,9 @@ def run_pikachu(selected_alg: str):
             return
         x, y = random.choice(start_candidates)
 
-        agent_map, niemtin = doi_tuong.KhoiTao_NiemTin_1_P(ma_tran, (x, y), pham_vi=pham_vi_init)
+        agent_map, niemtin = doi_tuong.KhoiTao_NiemTin_1_P((x, y), pham_vi=pham_vi_init)
 
-        queue = doi_tuong.deque([(x, y)])
+        queue = deque([(x, y)])
         visited = set([(x, y)])
 
         def cap_nhat_giao_dien():
@@ -532,7 +534,6 @@ def run_pikachu(selected_alg: str):
                 if ev.type == pygame.KEYDOWN and ev.key == pygame.K_p:
                     return "paused"
 
-
             x, y = queue.popleft()
 
             if step % 10 == 1:
@@ -542,7 +543,7 @@ def run_pikachu(selected_alg: str):
                 print("Xong")
                 break
 
-            danh_sach_thay_doi = doi_tuong.Quan_Sat_1_P(agent_map, ma_tran, x, y, pham_vi=pham_vi_init)
+            danh_sach_thay_doi = doi_tuong.Quan_Sat_1_P(agent_map, x, y, pham_vi=pham_vi_init)
             for (nx, ny) in danh_sach_thay_doi:
                 val = agent_map[nx][ny]
                 niemtin[(nx, ny)] = {val} if val != 0 else set()
@@ -578,8 +579,6 @@ def run_pikachu(selected_alg: str):
                         queue.append((nx, ny))
 
             cap_nhat_giao_dien()
-
-    img_congrats = pygame.image.load("mankey (1).png").convert_alpha()
 
     def Show_Congrats(surface, bg_img,  seconds=1.2):
         # scale icon về kích thước gọn
